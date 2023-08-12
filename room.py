@@ -158,9 +158,9 @@ async def monitor_console():
                 if cmd_dict['dname2'] is None:
                     table=Table(title=f"{room['name']} Uploads",box=box.ASCII2,show_lines=True)
                     table.add_column("Id",justify="center",no_wrap=True,style="cyan")
-                    table.add_column("Name",justify="center",no_wrap=True,style="bright_yellow")
-                    table.add_column("Download Name",justify="center",no_wrap=True,style="bright_green")
-                    table.add_column("Uploader",justify="center",no_wrap=True,style="magenta")
+                    table.add_column("Name",justify="center",no_wrap=False,style="bright_yellow")
+                    table.add_column("Download Name",justify="center",no_wrap=False,style="bright_green")
+                    table.add_column("Uploader",justify="center",no_wrap=False,style="magenta")
                     async with httpx.AsyncClient(timeout=None) as client:
                         res=await client.get(BASE_URL+f"uploads/?mode=room&room={room['id']}",headers=HEADERS)
                     for file in res.json():
@@ -193,22 +193,22 @@ async def monitor_console():
                 creator=f"Creator : {room['creator']['username']}"
                 tablea=Table(title=f"{room['name']} Admins",box=box.ASCII2,show_lines=True)
                 tablea.add_column("Id",justify="center",no_wrap=True,style="cyan")
-                tablea.add_column("Username",justify="center",no_wrap=True,style="bright_yellow")
+                tablea.add_column("Username",justify="center",no_wrap=False,style="bright_yellow")
                 for member in room['admins']:
                     tablea.add_row(str(member['id']),member['username'])
                 tablem=Table(title=f"{room['name']} Members",box=box.ASCII2,show_lines=True)
                 tablem.add_column("Id",justify="center",no_wrap=True,style="cyan")
-                tablem.add_column("Username",justify="center",no_wrap=True,style="bright_yellow")
+                tablem.add_column("Username",justify="center",no_wrap=False,style="bright_yellow")
                 for member in room['members']:
                     tablem.add_row(str(member['id']),member['username'])
                 tableb=Table(title=f"{room['name']} Bans",box=box.ASCII2,show_lines=True)
                 tableb.add_column("Id",justify="center",no_wrap=True,style="cyan")
-                tableb.add_column("Username",justify="center",no_wrap=True,style="bright_yellow")
+                tableb.add_column("Username",justify="center",no_wrap=False,style="bright_yellow")
                 for member in room['bans']:
                     tableb.add_row(str(member['id']),member['username'])
                 tablei=Table(title=f"{room['name']} Invites",box=box.ASCII2,show_lines=True)
                 tablei.add_column("Id",justify="center",no_wrap=True,style="cyan")
-                tablei.add_column("Username",justify="center",no_wrap=True,style="bright_yellow")
+                tablei.add_column("Username",justify="center",no_wrap=False,style="bright_yellow")
                 for member in room['invites']:
                     tablei.add_row(str(member['id']),member['username'])
                 name=f"Name : {room['name']}"
