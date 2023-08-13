@@ -94,7 +94,7 @@ async def upload(cmd_dict):
                 await printScreen("client_ok","File uploaded!")
                 ws.send(json.dumps({
                     "type":"chat",
-                    "text":f"Uploaded file : {res_json['file']} | With download name : {res_json['dname']}\n{res_json['caption']}"
+                    "text":f"Uploaded file : {res_json['file']} | With download name : {res_json['dname']} | Id : {res_json['id']}\n{res_json['caption']}"
                 }))
             else:
                 await printScreen("client_error",getErrors(res_json))
@@ -145,7 +145,7 @@ async def monitor_ws():
 
 async def monitor_console():
     global room
-    matcher=re.compile(r"((?P<up>\*up)|(?P<down>\*dn)|\*(?P<command>ban|kick|invite|make_admin|remove_admin)|(?P<set>\*set)|(?P<info>\*info)|(?P<delete>\*delete)|(?P<help>\*help|\*))(?(up) \"(?P<upath>[^\"]+)\"(?P<dname> \w+)?( \"(?P<caption>[^\"]+)\")?|(?(down)( (?P<dname2>\S+) (?P<fname>.+))?|(?(command) (?P<username>.+)|(?(set) (?P<fields>[a-z_&]+) (?P<values>.+)|$))))")
+    matcher=re.compile(r"((?P<up>\*up)|(?P<down>\*dn)|\*(?P<command>ban|kick|invite|make_admin|remove_admin)|(?P<set>\*set)|(?P<delete_upload>\*delete_upload)|(?P<info>\*info)|(?P<delete>\*delete)|(?P<help>\*help|\*))(?(up) \"(?P<upath>[^\"]+)\"(?P<dname> \w+)?( \"(?P<caption>[^\"]+)\")?|(?(down)( (?P<dname2>\S+) (?P<fname>.+))?|(?(command) (?P<username>.+)|(?(set) (?P<fields>[a-z_&]+) (?P<values>.+)|(?(delete_upload) (?P<uid>[0-9]+)|$)))))")
     while True:
         os.system('cls')
         inp=await aioconsole.ainput(f"{username} : ")
@@ -225,6 +225,13 @@ async def monitor_console():
                 can_admins_upload = f"Can admins upload : {str(room['can_admins_upload'])}"
                 message=[id,creator,tablea,tablem,tableb,tablei,name,count,limit,welcome,code,has_password,password,is_private,can_invite,can_admins_invite,can_upload,can_admins_upload]
                 await printScreen("client_list",message)  
+            elif cmd_dict['delete_upload'] is not None:
+                async with httpx.AsyncClient(timeout=None) as client:
+                    res=await client.delete(BASE_URL+f"uploads/{cmd_dict['uid']}/",headers=HEADERS)
+                if res.is_success:
+                    await printScreen("client_ok","Upload deleted!")
+                else:
+                    await printScreen("client_error",getErrors(res.json()))
             elif cmd_dict['delete'] is not None:
                 inp=Prompt.ask("Type the name of the room to delete it ")
                 if inp==room['name']:
@@ -237,6 +244,7 @@ async def monitor_console():
                     "ban/kick/invite/make_admin/remove_admin":"*'command' 'username'",
                     "set settings":"*set 'fields seperateed by &' 'values seperated by &'",
                     "show settings/info":"*info",
+                    "delete upload":"*delete_upload 'id'",
                     "delete room":"*delete",
                     "show help":"*help/*"
                 }
