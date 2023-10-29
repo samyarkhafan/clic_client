@@ -35,7 +35,7 @@ while True:
     console.print("Please select one of the options below : \n1-login\n2-register\n")
     inp=IntPrompt.ask("Your choice ",choices=["1","2"],default=1,show_default=False,show_choices=False)
     username=Prompt.ask("Please enter your username ")
-    password=Prompt.ask("Please enter your password ",password=True)
+    password=Prompt.ask("Please enter your password ")
     if inp==1:
         res = requests.post(BASE_URL+"auth/token/login/",json={
             "username":username,
